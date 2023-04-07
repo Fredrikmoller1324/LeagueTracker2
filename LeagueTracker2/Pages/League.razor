@@ -1,0 +1,50 @@
+﻿@page "/league"
+@using LeagueTracker2.Controllers;
+@using Microsoft.AspNetCore.Mvc;
+@inject HttpClient Http
+
+<PageTitle>League Test</PageTitle>
+
+@inject SummonerController SummonerController
+
+<h1>Summoner Info</h1>
+
+<label for="summonerNameInput">Summoner Name:</label>
+<input type="text" id="summonerNameInput" @bind-value="summonerName" />
+
+<button class="btn btn-primary" @onclick="GetSummonerInfo">Get Info</button>
+
+@if (!string.IsNullOrEmpty(puuID))
+{
+    <div>
+        @puuID
+    </div>
+}
+
+
+
+@code {
+    private string summonerName;
+    private string puuID;
+
+    private async Task GetSummonerInfo()
+    {
+        try
+        {
+            var puuIdResponse = await SummonerController.GetPuuid(summonerName) as OkObjectResult;
+
+            puuID = (string)puuIdResponse.Value;
+
+            var matchIdList = await SummonerController.GetMatchHistory(puuID) as OkObjectResult;
+
+
+
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+
+    }
+
+}
